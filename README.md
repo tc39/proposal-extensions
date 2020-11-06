@@ -92,6 +92,17 @@ $ = EXT_INVOKE(Array, 'flatMap', $, [e => EXT_INVOKE(u, 'toArray', e.classList, 
 $ = EXT_INVOKE(u, 'toSet', $, [])
 $ = EXT_GET(Set, 'size', $)
 let classCount = $
+
+// abstract operations
+function EXT_INVOKE(ext, name, thisArg, args) {
+  let method = (IsConstructor(ext) ? ext.prototype : ext)[name]
+  return Reflect.apply(method, thisArg, args)
+}
+function EXT_GET(ext, name, thisArg) {
+  let {get} = Reflect.getOwnPropertyDescriptor(
+    IsConstructor(ext) ? ext.prototype : ext, name)
+  return Reflect.apply(get, thisArg, args)
+}
 ```
 
 ## Change of the old bind operator proposal
