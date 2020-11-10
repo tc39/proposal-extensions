@@ -6,6 +6,7 @@
 
 It allows the developers adding methods to built-in libraries and 3rd-party libraries statically and locally (not monkey patch), and also provide a new way to organize the code. Some programming languages already use Extensions to envlove their standard libraries.
 
+The main difference of Extensions of other programming languages with Extensions of JavaScript (aka. this proposal) is, this proposal use a individul operator `::` instead of overloading `.` operator, see [syntax](syntax.md) for further discussion. A consequence of that is this proposal has a very simple semantic of method dispatching instead of complex resolve mechanism.
 
 ### History of adoption of Extensions or similar features in the programming languages
 
