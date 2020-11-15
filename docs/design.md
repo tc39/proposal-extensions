@@ -99,7 +99,7 @@ const $ext = Extension.from(value)
 const *::x = ExtensionGetMethod($ext, 'x')
 const *::x1 = ExtensionGetMethod($ext, 'y')
 ```
-
+And
 ```js
 import *::{x, y as x1} from 'mod'
 ```
