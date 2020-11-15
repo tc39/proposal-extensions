@@ -26,7 +26,7 @@ CallExtGetter($prop, x)          // Call(getter, x, [])
 CallExtSetter($prop, x, value)   // Call(setter, x, [value])
 ```
 
-See [experimental implementation](experimental/binary.js) for details.
+See [experimental implementation](../experimental/binary.js) for details.
 
 ## `x::ext:name`
 
@@ -46,7 +46,7 @@ If `O` is not a constructor, `x::O:func(...args)` roughly equals to `O.func(x, .
 
 The behavior can also be customized by `Symbol.extension`.
 
-See [experimental implementation](experimental/ternary.js) for details.
+See [experimental implementation](../experimental/ternary.js) for details.
 
 ## `Extension` API
 
@@ -57,7 +57,7 @@ class Extension {
 }
 ```
 
-See [experimental implementation](experimental/Extension.js) for details.
+See [experimental implementation](../experimental/Extension.js) for details.
 
 ## Follow-on proposals
 
