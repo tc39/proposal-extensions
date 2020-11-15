@@ -101,7 +101,7 @@ function EXT_INVOKE(ext, name, thisArg, args) {
 function EXT_GET(ext, name, thisArg) {
   let {get} = Reflect.getOwnPropertyDescriptor(
     IsConstructor(ext) ? ext.prototype : ext, name)
-  return Reflect.apply(get, thisArg, args)
+  return Reflect.apply(get, thisArg)
 }
 ```
 
