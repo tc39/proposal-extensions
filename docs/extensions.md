@@ -176,3 +176,35 @@ c.foo #=> C#foo in M
 ## The discussion of introducing Extensions in TypeScript
 
 - https://github.com/microsoft/TypeScript/issues/9
+
+The main reason why TS can't introduce Extensions is, TS has a design goal that not generate special code or do runtime dispatching based on type. So it's hard to deal with the code like:
+
+```ts
+interface Test {
+	test(): string
+}
+
+// use similar syntax of Swift to declare extensions
+extension String {
+  test() { return 'test on string' }
+}
+extension Number {
+  test() { return 'test on number' }
+}
+
+const n = 1, s = '1', o = { test() { return 'test' } }
+
+n.test() // expect 'test on number'
+s.test() // expect 'test on string'
+o.test() // expect 'test'
+
+Number.prototype.test = function () { return 'test on number proto' }
+n.test() // behavior? what will generated code look like?
+
+for (const x of [n, s, o]) {
+	// type of x is number | string | typeof o
+  x.test() // behavior? what will generated code look like?
+	const x1 = x as Test
+	x1.test() // behavior? what will generated code look like?
+}
+```
