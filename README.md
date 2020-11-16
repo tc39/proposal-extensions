@@ -11,26 +11,26 @@ Note: The proposal could be seen as the new iteration of old [bind operator prop
 ### Example of ad-hoc extension methods and accessors
 ```js
 // define two extension methods
-const *::toArray = function () { return [...this] }
-const *::toSet = function () { return new Set(this) }
+const ::toArray = function () { return [...this] }
+const ::toSet = function () { return new Set(this) }
 
 // define a extension accessor
-const *::allDivs = {
-  get() { return this.querySelectorAll('div') }
+const ::allDivs = {
+	get() { return this.querySelectorAll('div') }
 }
 
-// reuse prototype method and accessor
-const *::flatMap = Array.prototype.flatMap
-const *::size = Object.getOwnPropertyDescriptor(Set.prototype, 'size')
+// reuse built-in prototype methods and accessors
+const ::flatMap = Array.prototype.flatMap
+const ::size = Object.getOwnPropertyDescriptor(Set.prototype, 'size')
 
 // Use extension methods and accesors to calculate
 // the count of all classes of div element.
 let classCount = document::allDivs
-  ::flatMap(e => e.classList::toArray())
-  ::toSet()::size
+	::flatMap(e => e.classList::toArray())
+	::toSet()::size
 ```
 
-basically have the semantic as:
+roughly equals to:
 
 ```js
 // define two extension methods
@@ -39,10 +39,10 @@ const $toSet = function () { return new Set(this) }
 
 // define a extension accessor
 const $allDivs = {
-  get() { return this.querySelectorAll('div') }
+	get() { return this.querySelectorAll('div') }
 }
 
-// reuse prototype method and accessor
+// reuse built-in prototype method and accessor
 const $flatMap = Array.prototype.flatMap
 const $size = Object.getOwnPropertyDescriptor(Set.prototype, 'size')
 
@@ -65,44 +65,35 @@ export const toSet = iterable => new Set(iterable)
 ```
 
 ```js
-import * as u from './util.js'
+import * as util from './util.js'
 
-const *::allDivs = {
-  get() { return this.querySelectorAll('div') }
+const ::allDivs = {
+	get() { return this.querySelectorAll('div') }
 }
 
 let classCount = document::allDivs
-  ::Array:flatMap(e => e.classList::u:toArray())
-  ::u:toSet()
-  ::Set:size
+	::Array:flatMap(
+		e => e.classList::util:toArray())
+	::util:toSet()
+	::Set:size
 ```
 
-basically have the semantic as:
+roughly equals to:
 
 ```js
-import * as u from './util.js'
+import * as util from './util.js'
 
-const *::allDivs = {
-  get() { return this.querySelectorAll('div') }
+const $allDivs = {
+	get() { return this.querySelectorAll('div') }
 }
 
 let $
 $ = $allDivs.get.call(document)
-$ = EXT_INVOKE(Array, 'flatMap', $, [e => EXT_INVOKE(u, 'toArray', e.classList, [])])
-$ = EXT_INVOKE(u, 'toSet', $, [])
-$ = EXT_GET(Set, 'size', $)
+$ = Array.prototype.flatMap.call($,
+	e => util.toArray(e.classList))
+$ = util.toSet($)
+$ = Object.getOwnPropertyDescriptor(Set.prototype, 'size').get.call($)
 let classCount = $
-
-// abstract operations
-function EXT_INVOKE(ext, name, thisArg, args) {
-  let method = (IsConstructor(ext) ? ext.prototype : ext)[name]
-  return Reflect.apply(method, thisArg, args)
-}
-function EXT_GET(ext, name, thisArg) {
-  let {get} = Reflect.getOwnPropertyDescriptor(
-    IsConstructor(ext) ? ext.prototype : ext, name)
-  return Reflect.apply(get, thisArg)
-}
 ```
 
 ## Change of the old bind operator proposal
@@ -112,4 +103,4 @@ function EXT_GET(ext, name, thisArg) {
 - separate namespace for ad-hoc extension methods and accessors, do not pollute normal binding names
 - add `obj::ext:name` syntax
 - change operator precedence to same as `.`
-- remove `::obj.foo` (use cases can be solved by custom extension + library)
+- remove `::obj.foo` (use cases can be solved by custom extension + library, or other proposals)
