@@ -62,21 +62,31 @@ const ::size = Object.getOwnPropertyDescriptor(Set.prototype, 'size') as { get(t
 
 There are two rules to help to mitigate the ambiguity of using `A::B:C` with `? ... :` or `case ... :` .
 
-1. Newline is not allowed around `:` in `A::B:C`, aka. `B : C` must be in the same line. So
-	```js
-	let x = foo
-		? A::B
-		: C
-	```
-	and
-	```js
-	case A::B:
-		C
-	```
-	will work as developer expected.
-2. `A::B:C` has the higher precedence, so `foo ? A :: B : C` will always be parsed as `foo ? (A::B:C)`, not `foo ? (A::B) : C`; `case A :: B : C` will always be parsed as `case (A::B:C)`, not `case (A::B): C`.
-  Alternative 1: do not allow spaces between `:` and `C`, so `foo ? A::B : C` and `case A::B: C` will work as developer expect.
-  Alternative 2: make `foo ? A :: B : C` or `case A :: B : C` be syntax error and force programmers use parens in such cases.
+### Newline is not allowed around `:` in `A::B:C`
+
+Aka. `B : C` must be in the same line. So
+```js
+let x = foo
+	? A::B
+	: C
+```
+and
+```js
+case A::B:
+	C
+```
+will work as developer expected.
+
+### `A::B:C` has the higher precedence
+
+So `foo ? A :: B : C` will always be parsed as `foo ? (A::B:C)`, not `foo ? (A::B) : C`;
+`case A :: B : C` will always be parsed as `case (A::B:C)`, not `case (A::B): C`.
+
+Alternative 1: do not allow spaces between `:` and `C`, so `foo ? A::B : C` and `case A::B: C` will work as developer expect.
+
+Alternative 2: make `foo ? A :: B : C` or `case A :: B : C` be syntax error and force programmers use parens in such cases.
+
+---
 
 Another alternative is replacing `:` to other character. It can't be any exist binary operator. Unary operators `!` or `~` could be reused, though it will make them not available for potential overload for binary operator.
 
