@@ -2,7 +2,7 @@
 
 ## Proposal status
 
-This is an ECMAScript (JavaScript) proposal in stage 0 and plan to be presented in next TC39 meeting.
+This is an ECMAScript (JavaScript) proposal in stage 1.
 
 Note: The proposal could be seen as the new iteration of old [bind operator proposal](https://github.com/tc39/proposal-bind-operator) and I hope we could continue the further development in the original proposal repo if possible. See https://github.com/tc39/proposal-bind-operator/issues/56 .
 
