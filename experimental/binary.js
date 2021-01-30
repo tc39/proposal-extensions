@@ -31,7 +31,7 @@ export function CreateExtMethod(O) {
 		return {
 			get, set,
 			invoke(...args) {
-				const f = Call(get, this, [])
+				const f = Call(get, this)
 				return Call(f, this, args)
 			},
 		}

@@ -1,4 +1,4 @@
-import {Assert, GetOwnPropertyDescriptor, IsObject} from './extra.js'
+import {Assert, GetOwnPropertyDescriptor} from './extra.js'
 const {Math, TypeError, Object, Number, String, Reflect} = globalThis
 
 // 7.1 Type Conversion
@@ -66,7 +66,10 @@ export function HasOwnProperty(object, key) {
 }
 
 // 7.3.13
-export const Call = Reflect.apply
+export function Call(F, V, argumentsList = []) {
+	return Apply(F, V, argumentsList)
+}
+const Apply = Reflect.apply
 
 // 7.3.14
 export const Construct = Reflect.construct
