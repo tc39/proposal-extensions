@@ -6,29 +6,89 @@ This proposal also introduce a new global `Extension` function object and a new 
 
 ## `x::name` (ad-hoc extension methods and accessors)
 
+### Usage
+
+Declare a ad-hoc extension method and use it:
+```js
+const ::last = function () {
+	return this[this.length - 1]
+}
+
+[1, 2, 3]::last() // 3
+```
+
+Like normal const declarations, ad-hoc extension methods are also
+lexical:
+
+```js
+const ::foo = function () { return 'outer' }
+
+function test() {
+	// TDZ here
+	// x::foo()
+
+	const ::foo = function () { return 'inner' }
+
+	x::foo() // 'inner'
+}
+
+x::foo() // 'outer'
+```
+
+Ad-hoc extension accessors:
+
+```js
+const ::last = {
+	get() { return this[this.length - 1] },
+	set(v) { this[this.length - 1] = v },
+}
+
+let x = [1, 2, 3]
+x::last // 3
+x::last = 10
+x // [1, 2, 10]
+x::last++
+x // [1, 2, 11]
+```
+
+`a::b` have the same precedence of `a.b`, so they can be chained seamlessly:
+
+```js
+document.querySelectorAll('.note')
+	::filter(x => x.textContent.include(keyword))
+	.map()
+```
+
+
+
+### Errors
+
+
+### Transpile
+
 ```js
 // declare a ad-hoc extension method/accessor
-const *::method = func
-const *::prop = {get: getter, set: setter}
+const ::method = func
+const ::prop = {get: getter, set: setter}
 
 // use ad-hoc extension methods and accessors
 x::method(...args)
 x::prop
 x::prop = value
 ```
-roughly equals to
+could be transpile to
 ```js
-const $method = CreateExtMethod(func, '*')
-const $prop = CreateExtMethod({get: getter, set: setter}, '*')
+const $method = CreateExtMethod(func)
+const $prop = CreateExtMethod({get: getter, set: setter})
 
 CallExtMethod($method, x, args)  // Call(func, x, args)
-CallExtGetter($prop, x)          // Call(getter, x, [])
+CallExtGetter($prop, x)          // Call(getter, x)
 CallExtSetter($prop, x, value)   // Call(setter, x, [value])
 ```
 
 See [experimental implementation](../experimental/binary.js) for details.
 
-## `x::ext:name`
+## `x::ext:name` (extension)
 
 ```js
 x::O:method(...args)
