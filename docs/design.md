@@ -61,9 +61,6 @@ document.querySelectorAll('.note')
 
 
 
-### Errors
-
-
 ### Transpile
 
 ```js
@@ -125,48 +122,48 @@ See [experimental implementation](../experimental/Extension.js) for details.
 
 ```js
 // doesn't work
-const *::cube = x => x ** 3
-const *::sqrt = Math.sqrt
+const ::cube = x => x ** 3
+const ::sqrt = Math.sqrt
 ```
 ```js
 // work
-const *::cube = function () {
+const ::cube = function () {
 	return this ** 3
 }
-const *::sqrt = function () {
+const ::sqrt = function () {
 	return Math.sqrt(this)
 }
 ```
 
 ```js
 // Use Extension.method helper
-const *::cube = Extension.method(x => x ** 3)
+const ::cube = Extension.method(x => x ** 3)
 2::cube() // 8
 
 // Use Extension.accessor helper
-const *::sqrt = Extension.accessor(Math.sqrt)
+const ::sqrt = Extension.accessor(Math.sqrt)
 9::sqrt // 3
 ```
 
 ### Declare/import multiple ad-hoc extension methods and accessors
 
 ```js
-const *::{x, y as x1} from value
+const ::{x, y as x1} from value
 ```
 work as
 ```js
 const $ext = Extension.from(value)
-const *::x = ExtensionGetMethod($ext, 'x')
-const *::x1 = ExtensionGetMethod($ext, 'y')
+const ::x = ExtensionGetMethod($ext, 'x')
+const ::x1 = ExtensionGetMethod($ext, 'y')
 ```
 And
 ```js
-import *::{x, y as x1} from 'mod'
+import ::{x, y as x1} from 'mod'
 ```
 work as
 ```js
 import * as $mod from 'mod'
-const *::{x, y as x1} from $mod
+const ::{x, y as x1} from $mod
 ```
 
 ### Optional chaining
