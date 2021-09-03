@@ -145,6 +145,22 @@ const ::sqrt = Extension.accessor(Math.sqrt)
 9::sqrt // 3
 ```
 
+`Extension.method` and `Extension.accessor` also accept the extra param to denote how to deal with the receiver.
+```js
+const ::max = Extension.accessor(Math.max, 'spread');
+[1, 2, 3]::max // 3
+```
+
+The valid values:
+- `'first'` (default): 
+  `Extension.method(f, 'first')` behave like `function (...args) { return f(this, ...args) }`
+- `'last'`:
+  `Extension.method(f, 'last')` behave like `function (...args) { return f(...args, this) }`
+- `'spread first'` or `'first spread'` or `'spread'`: 
+  `Extension.method(f, 'spread first')` behave like `function (...args) { return f(...this, ...args) }`
+- `'spread last'` or `'last spread'`: 
+  `Extension.method(f, 'spread last')` behave like `function (...args) { return f(...args, ...last) }`
+
 ### Declare/import multiple ad-hoc extension methods and accessors
 
 ```js
