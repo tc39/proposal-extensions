@@ -152,13 +152,13 @@ const ::max = Extension.accessor(Math.max, 'spread');
 ```
 
 The valid values:
-- `'first'` (default): 
+- `'first'` (default): <br>
   `Extension.method(f, 'first')` behave like `function (...args) { return f(this, ...args) }`
-- `'last'`:
+- `'last'`: <br>
   `Extension.method(f, 'last')` behave like `function (...args) { return f(...args, this) }`
-- `'spread first'` or `'first spread'` or `'spread'`: 
+- `'spread first'` or `'first spread'` or `'spread'`: <br>
   `Extension.method(f, 'spread first')` behave like `function (...args) { return f(...this, ...args) }`
-- `'spread last'` or `'last spread'`: 
+- `'spread last'` or `'last spread'`: <br>
   `Extension.method(f, 'spread last')` behave like `function (...args) { return f(...args, ...last) }`
 
 ### Declare/import multiple ad-hoc extension methods and accessors
