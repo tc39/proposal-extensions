@@ -120,6 +120,27 @@ See [experimental implementation](../experimental/Extension.js) for details.
 
 ## Extra features (could be split to follow-on proposals)
 
+### Declare/import multiple ad-hoc extension methods and accessors
+
+```js
+const ::{x, y as x1} from value
+```
+work as
+```js
+const $ext = Extension.from(value)
+const ::x = ExtensionGetMethod($ext, 'x')
+const ::x1 = ExtensionGetMethod($ext, 'y')
+```
+And
+```js
+import ::{x, y as x1} from 'mod'
+```
+work as
+```js
+import * as $mod from 'mod'
+const ::{x, y as x1} from $mod
+```
+
 ### Static helper methods of `Extension`
 
 ```js
@@ -179,27 +200,6 @@ function (...args) { return f(...this, ...args) }
 `Extension.method(f, {receiver: 'spread last'})` behave like 
 ```js
 function (...args) { return f(...args, ...this) }
-```
-
-### Declare/import multiple ad-hoc extension methods and accessors
-
-```js
-const ::{x, y as x1} from value
-```
-work as
-```js
-const $ext = Extension.from(value)
-const ::x = ExtensionGetMethod($ext, 'x')
-const ::x1 = ExtensionGetMethod($ext, 'y')
-```
-And
-```js
-import ::{x, y as x1} from 'mod'
-```
-work as
-```js
-import * as $mod from 'mod'
-const ::{x, y as x1} from $mod
 ```
 
 ### Optional chaining
