@@ -4,9 +4,11 @@
 
 [Extensions](https://en.wikipedia.org/wiki/Extension_method) is a feature many programming languages introduced in recent years, especially the new languages Swift/Kotlin/Dart.
 
-It allows the developers adding methods to built-in libraries and 3rd-party libraries statically and locally (not monkey patch), and also provide a new way to organize the code. Some programming languages already use Extensions to envlove their standard libraries.
+Note: we use term "extensions" to denote "static extensions" which excludes [monkey patch](https://en.wikipedia.org/wiki/Monkey_patch).
 
-The main difference of Extensions of other programming languages with Extensions of JavaScript (aka. this proposal) is, this proposal use a individul operator `::` instead of overloading `.` operator, see [syntax](syntax.md) for further discussion. A consequence of that is this proposal has a very simple semantic of method dispatching instead of complex resolve mechanism.
+It allows the developers adding methods to built-in libraries and 3rd-party libraries *statically* and *locally*, and also provide a new way to organize the code. Some programming languages already use Extensions to envlove their standard libraries.
+
+The main difference of Extensions of other programming languages with Extensions of JavaScript (aka. this proposal) is, this proposal use notation `::` instead of overloading `.`, see [syntax](syntax.md) for further discussion. A consequence of that is this proposal has a very simple semantic of method dispatching instead of complex resolving mechanism.
 
 ### History of adoption of Extensions or similar features in the programming languages
 
@@ -39,34 +41,34 @@ using System;
 
 namespace CustomExtensions
 {
-    // Extension methods must be defined in a static class.
-    public static class StringExtension
-    {
-        // This is the extension method.
-        // The first parameter takes the "this" modifier
-        // and specifies the type for which the method is defined.
-        public static int WordCount(this String str)
-        {
-            return str.Split(new char[] {' ', '.','?'}, StringSplitOptions.RemoveEmptyEntries).Length;
-        }
-    }
+	// Extension methods must be defined in a static class.
+	public static class StringExtension
+	{
+		// This is the extension method.
+		// The first parameter takes the "this" modifier
+		// and specifies the type for which the method is defined.
+		public static int WordCount(this String str)
+		{
+			return str.Split(new char[] {' ', '.','?'}, StringSplitOptions.RemoveEmptyEntries).Length;
+		}
+	}
 }
 namespace Extension_Methods_Simple
 {
-    // Import the extension method namespace.
-    using CustomExtensions;
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            string s = "The quick brown fox jumped over the lazy dog.";
-            // Call the method as if it were an
-            // instance method on the type. Note that the first
-            // parameter is not specified by the calling code.
-            int i = s.WordCount();
-            System.Console.WriteLine("Word count of s is {0}", i);
-        }
-    }
+	// Import the extension method namespace.
+	using CustomExtensions;
+	class Program
+	{
+		static void Main(string[] args)
+		{
+			string s = "The quick brown fox jumped over the lazy dog.";
+			// Call the method as if it were an
+			// instance method on the type. Note that the first
+			// parameter is not specified by the calling code.
+			int i = s.WordCount();
+			System.Console.WriteLine("Word count of s is {0}", i);
+		}
+	}
 }
 ```
 
@@ -76,9 +78,9 @@ namespace Extension_Methods_Simple
 
 ```swift
 extension Int {
-    var simpleDescription: String {
-        return "The number \(self)"
-    }
+	var simpleDescription: String {
+		return "The number \(self)"
+	}
 }
 print(7.simpleDescription)
 // Prints "The number 7"
@@ -98,7 +100,7 @@ fun Shape.getName() = "Shape"
 fun Rectangle.getName() = "Rectangle"
 
 fun printClassName(s: Shape) {
-    println(s.getName())
+	println(s.getName())
 }
 
 printClassName(Rectangle())
@@ -110,16 +112,16 @@ printClassName(Rectangle())
 
 ```scala
 object Helpers {
-  implicit class IntWithTimes(x: Int) {
-    def times[A](f: => A): Unit = {
-      def loop(current: Int): Unit =
-        if(current > 0) {
-          f
-          loop(current - 1)
-        }
-      loop(x)
-    }
-  }
+	implicit class IntWithTimes(x: Int) {
+		def times[A](f: => A): Unit = {
+			def loop(current: Int): Unit =
+				if(current > 0) {
+				f
+				loop(current - 1)
+				}
+			loop(x)
+		}
+	}
 }
 ```
 
@@ -134,10 +136,10 @@ import Helpers._
 
 ```dart
 extension NumberParsing on String {
-  int parseInt() {
-    return int.parse(this);
-  }
-  // ···
+	int parseInt() {
+		return int.parse(this);
+	}
+	// ···
 }
 ```
 
@@ -153,17 +155,17 @@ print('42'.parseInt()); // Use an extension method.
 
 ```ruby
 class C
-  def foo
-    puts "C#foo"
-  end
+	def foo
+		puts "C#foo"
+	end
 end
 
 module M
-  refine C do
-    def foo
-      puts "C#foo in M"
-    end
-  end
+	refine C do
+		def foo
+			puts "C#foo in M"
+		end
+	end
 end
 ```
 
@@ -172,6 +174,8 @@ using M
 x = C.new
 c.foo #=> C#foo in M
 ```
+
+See [Ruby 2.0 Refinements in Practice](https://yehudakatz.com/2010/11/30/ruby-2-0-refinements-in-practice/) written by Yehuda Katz.
 
 ## The discussion of introducing Extensions in TypeScript
 
@@ -186,10 +190,10 @@ interface Test {
 
 // use similar syntax of Swift to declare extensions
 extension String {
-  test() { return 'test on string' }
+	test() { return 'test on string' }
 }
 extension Number {
-  test() { return 'test on number' }
+	test() { return 'test on number' }
 }
 
 const n = 1, s = '1', o = { test() { return 'test' } }
@@ -203,8 +207,71 @@ n.test() // behavior? what will generated code look like?
 
 for (const x of [n, s, o]) {
 	// type of x is number | string | typeof o
-  x.test() // behavior? what will generated code look like?
+	x.test() // behavior? what will generated code look like?
 	const x1 = x as Test
 	x1.test() // behavior? what will generated code look like?
 }
 ```
+
+## Can we overload `.` operator like other programming languages?
+
+All other programming languages overload `.` operator for extensions. But it seems very impossible to work in JavaScript:
+
+```js
+let a = {}
+let b = {
+	test() { return 'b'}
+}
+
+a.test() // throw
+b.test() // 'b'
+
+{
+	// imaginary syntax to define an extension method locally
+	const *.test = function () { return 'ext' }
+
+	a.test() // 'ext'
+	b.test() // 'b'
+
+	a.test // ?
+	'test' in a // ?
+	a.test = function () { return 'a' } // ?
+	a.test() // 'a' ?
+
+	delete a.test
+	a.test() // 'ext' again?
+}
+```
+
+Obviously it will change the `.` semantic dramatically, and might break many optimization in current engines.
+
+A possible solution is make local extension have high preference (like Ruby)
+
+```js
+let a = {}
+let b = {
+	test() { return 'b'}
+}
+
+a.test() // throw
+b.test() // 'b'
+
+{
+	// define an extension method
+	const *.test = function () { return 'ext' }
+
+	a.test() // 'ext'
+	b.test() // 'ext'
+
+	a.test // throw
+	a.test = function () { return 'a' } // throw
+	delete a.test // throw
+
+	// do not overload `in` and `[]`
+	'test' in a // false
+	a['test'] // undefined
+	b['test']() // 'b'
+}
+```
+
+This is possible, but it seems do not have much benefit compare to a separate notation.
