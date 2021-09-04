@@ -214,7 +214,7 @@ x === null || x === undefined ? undefined : x::ext:method()
 
 ### in-place extension methods/accessors
 
-Just like dot notation `obj.prop` could have corresponding bracket notation `obj[computedProp]`, we could also introduce similar syntax.
+Just like dot notation `obj.prop` has corresponding bracket notation `obj[computedProp]`, we could also introduce similar syntax for extension methods/accessors.
 
 ```js
 x::[expression]
@@ -225,4 +225,4 @@ const ::$extMethodOrAccessor = expression
 x::$extMethodOrAccessor
 ```
 
-Currently the author of the proposal feel this syntax do not very useful, so not include it. If there are strong use cases, we could add it later.
+Currently the author of the proposal feel this syntax do not very useful, so not include it. If there are strong use cases, we could add it back.
