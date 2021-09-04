@@ -21,18 +21,20 @@ Like normal const declarations, ad-hoc extension methods are also
 lexical:
 
 ```js
-const ::foo = function () { return 'outer' }
+let x = 'x'
 
-function test() {
+const ::foo = function () { return `${this}@outer` }
+
+x::foo() // 'x@outer'
+
+{
 	// TDZ here
 	// x::foo()
 
-	const ::foo = function () { return 'inner' }
+	const ::foo = function () { return `${this}@inner` }
 
-	x::foo() // 'inner'
+	x::foo() // 'x@inner'
 }
-
-x::foo() // 'outer'
 ```
 
 Ad-hoc extension accessors:
@@ -116,7 +118,7 @@ class Extension {
 
 See [experimental implementation](../experimental/Extension.js) for details.
 
-## Follow-on proposals
+## Extra features (could be split to follow-on proposals)
 
 ### Static helper methods of `Extension`
 
@@ -207,3 +209,20 @@ work as
 x === null || x === undefined ? undefined : x::extMethod()
 x === null || x === undefined ? undefined : x::ext:method()
 ```
+
+## Other possible features
+
+### in-place extension methods/accessors
+
+Just like dot notation `obj.prop` could have corresponding bracket notation `obj[computedProp]`, we could also introduce similar syntax.
+
+```js
+x::[expression]
+```
+work as
+```js
+const ::$extMethodOrAccessor = expression
+x::$extMethodOrAccessor
+```
+
+Currently the author of the proposal feel this syntax do not very useful, so not include it. If there are strong use cases, we could add it later.
