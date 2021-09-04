@@ -107,7 +107,6 @@ let classCount = $
 
 ## Other matrials
 
-- [design details](docs/design)
+- [design details](docs/design.md)
 - [slide for stage 1](https://johnhax.net/2020/tc39-nov-ext/slide)
 - [experimental implementation](experimental)
-
