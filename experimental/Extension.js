@@ -48,13 +48,21 @@ export default class Extension {
 		return new Extension(CollectMethods(source, false), option)
 	}
 
-	static method(value) {
-		return ToMethod(value)
+	static method(value, options = undefined) {
+		return ToMethod('invoke', value, options)
 	}
-	static accessor(get, set = undefined) {
+	static accessor(get, set, arg3 = undefined, arg4 = undefined) {
+		let getOptions, setOptions
+		if (IsCallable(set)) {
+			setOptions = arg3
+		} else {
+			getOptions = set
+			set = arg3
+			setOptions = arg4
+		}
 		const result = {}
-		if (get !== undefined && get !== null) result.get = ToMethod(get)
-		if (set !== undefined && set !== null) result.set = ToMethod(set)
+		if (get !== undefined && get !== null) result.get = ToMethod('get', get, getOptions)
+		if (set !== undefined && set !== null) result.set = ToMethod('set', set, setOptions)
 		return result
 	}
 }
@@ -81,18 +89,39 @@ function ExtMethodFromPropDesc(pd) {
 function ExtMethodFromMethod(o, k) {
 	const v = o[k]
 	if (IsCallable(v) && !IsClassConstructor(v)) {
-		return ToMethod(BindThisArg(v, o))
+		return ToMethod('invoke', BindThisArg(v, o))
 	}
 	return undefined
 }
 
-function ToMethod(V) {
+function ToMethod(type, V, options) {
 	if (!IsCallable(V)) throw new TypeError()
 	if (IsClassConstructor(V)) throw new TypeError()
-	const f = function (...args) {
-		return V(this, ...args)
+
+	options ??= {}
+	const {receiver} = options
+	let first = false, last = false, spread = false
+	if (receiver) {
+		for (const token of String(receiver).trim().split(/\s+/)) {
+			switch (token) {
+				case 'spread': spread = true; break
+				case 'last': last = true; break
+				case 'first': first = true; break
+				default: throw new TypeError()
+			}
+		}
+		if (first && last) throw new TypeError()
 	}
-	DefinePropertyOrThrow(f, 'name', {value: `method ${V.name}`})
+
+	const f = spread
+		? last
+			? function (...args) { return V(...args, ...this) }
+			: function (...args) { return V(...this, ...args) }
+		: last
+			? function (...args) { return V(...args, this) }
+			: function (...args) { return V(this, ...args) }
+
+	DefinePropertyOrThrow(f, 'name', {value: `${type} ${V.name}`})
 	DefinePropertyOrThrow(f, 'length', {value: ToLength(V.length - 1)})
 	return f
 }
