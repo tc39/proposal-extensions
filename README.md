@@ -4,7 +4,7 @@
 
 This is an ECMAScript (JavaScript) proposal in stage 1.
 
-Note: The proposal could be seen as the new iteration of old [bind operator proposal](https://github.com/tc39/proposal-bind-operator) and I hope we could continue the further development in the original proposal repo if possible. See https://github.com/tc39/proposal-bind-operator/issues/56 .
+Note: The proposal could be seen as the reshape of the "virtual method" part of old [bind operator proposal](https://github.com/tc39/proposal-bind-operator), see https://github.com/tc39/proposal-bind-operator/issues/56.
 
 ## Simple examples
 
@@ -96,7 +96,7 @@ $ = Object.getOwnPropertyDescriptor(Set.prototype, 'size').get.call($)
 let classCount = $
 ```
 
-## Change of the old bind operator proposal
+## Changes of the old bind operator proposal
 
 - keep `obj::foo()` syntax for extension methods
 - repurpose `obj::foo` as extension getters and add `obj::foo =` as extension setters
@@ -104,3 +104,10 @@ let classCount = $
 - add `obj::ext:name` syntax
 - change operator precedence to same as `.`
 - remove `::obj.foo` (use cases can be solved by custom extension + library, or other proposals)
+
+## Other matrials
+
+- [design details](docs/design)
+- [slide for stage 1](https://johnhax.net/2020/tc39-nov-ext/slide)
+- [experimental implementation](experimental)
+

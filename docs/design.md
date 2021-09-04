@@ -21,18 +21,20 @@ Like normal const declarations, ad-hoc extension methods are also
 lexical:
 
 ```js
-const ::foo = function () { return 'outer' }
+let x = 'x'
 
-function test() {
+const ::foo = function () { return `${this}@outer` }
+
+x::foo() // 'x@outer'
+
+{
 	// TDZ here
 	// x::foo()
 
-	const ::foo = function () { return 'inner' }
+	const ::foo = function () { return `${this}@inner` }
 
-	x::foo() // 'inner'
+	x::foo() // 'x@inner'
 }
-
-x::foo() // 'outer'
 ```
 
 Ad-hoc extension accessors:
@@ -116,7 +118,28 @@ class Extension {
 
 See [experimental implementation](../experimental/Extension.js) for details.
 
-## Follow-on proposals
+## Extra features (could be split to follow-on proposals)
+
+### Declare/import multiple ad-hoc extension methods and accessors
+
+```js
+const ::{x, y as x1} from value
+```
+work as
+```js
+const $ext = Extension.from(value)
+const ::x = ExtensionGetMethod($ext, 'x')
+const ::x1 = ExtensionGetMethod($ext, 'y')
+```
+And
+```js
+import ::{x, y as x1} from 'mod'
+```
+work as
+```js
+import * as $mod from 'mod'
+const ::{x, y as x1} from $mod
+```
 
 ### Static helper methods of `Extension`
 
@@ -145,53 +168,38 @@ const ::sqrt = Extension.accessor(Math.sqrt)
 9::sqrt // 3
 ```
 
-`Extension.method` and `Extension.accessor` also accept the extra param to denote how to deal with the receiver.
+`Extension.method` and `Extension.accessor` also accept the extra options argument.
+
+Programmers could use `"receiver"` option to indicate how to deal with the receiver.
+
 ```js
-const ::max = Extension.accessor(Math.max, 'spread');
+// Define ::max extension accessor
+const ::max = Extension.accessor(Math.max, {receiver: 'spread'});
+// spread the receiver, so `receiver::max` work as `Math.max(...receiver)`
+
 [1, 2, 3]::max // 3
 ```
 
-The valid values:
+The valid values of `"receiver"` option:
 #### `'first'` (default)
-`Extension.method(f, 'first')` behave like
+`Extension.method(f, {receiver: 'first'})` behave like
 ```js
 function (...args) { return f(this, ...args) }
 ```
 ####  `'last'`
-`Extension.method(f, 'last')` behave like
+`Extension.method(f, {receiver: 'last'})` behave like
 ```js
 function (...args) { return f(...args, this) }
 ```
 ####  `'spread first'` or `'first spread'` or `'spread'`
-`Extension.method(f, 'spread first')` behave like 
+`Extension.method(f, {receiver: 'spread first'})` behave like 
 ```js
 function (...args) { return f(...this, ...args) }
 ```
 ####  `'spread last'` or `'last spread'`
-`Extension.method(f, 'spread last')` behave like 
+`Extension.method(f, {receiver: 'spread last'})` behave like 
 ```js
 function (...args) { return f(...args, ...this) }
-```
-
-### Declare/import multiple ad-hoc extension methods and accessors
-
-```js
-const ::{x, y as x1} from value
-```
-work as
-```js
-const $ext = Extension.from(value)
-const ::x = ExtensionGetMethod($ext, 'x')
-const ::x1 = ExtensionGetMethod($ext, 'y')
-```
-And
-```js
-import ::{x, y as x1} from 'mod'
-```
-work as
-```js
-import * as $mod from 'mod'
-const ::{x, y as x1} from $mod
 ```
 
 ### Optional chaining
@@ -207,3 +215,20 @@ work as
 x === null || x === undefined ? undefined : x::extMethod()
 x === null || x === undefined ? undefined : x::ext:method()
 ```
+
+## Other possible features
+
+### in-place extension methods/accessors
+
+Just like dot notation `obj.prop` has corresponding bracket notation `obj[computedProp]`, we could also introduce similar syntax for extension methods/accessors.
+
+```js
+x::[expression]
+```
+work as
+```js
+const ::$extMethodOrAccessor = expression
+x::$extMethodOrAccessor
+```
+
+Currently the author of the proposal feel this syntax do not very useful, so not include it. If there are strong use cases, we could add it back.
