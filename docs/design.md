@@ -147,30 +147,36 @@ const ::sqrt = Extension.accessor(Math.sqrt)
 9::sqrt // 3
 ```
 
-`Extension.method` and `Extension.accessor` also accept the extra param to denote how to deal with the receiver.
+`Extension.method` and `Extension.accessor` also accept the extra options argument.
+
+Programmers could use `"receiver"` option to indicate how to deal with the receiver.
+
 ```js
-const ::max = Extension.accessor(Math.max, 'spread');
+// Define ::max extension accessor
+const ::max = Extension.accessor(Math.max, {receiver: 'spread'});
+// spread the receiver, so `receiver::max` work as `Math.max(...receiver)`
+
 [1, 2, 3]::max // 3
 ```
 
-The valid values:
+The valid values of `"receiver"` option:
 #### `'first'` (default)
-`Extension.method(f, 'first')` behave like
+`Extension.method(f, {receiver: 'first'})` behave like
 ```js
 function (...args) { return f(this, ...args) }
 ```
 ####  `'last'`
-`Extension.method(f, 'last')` behave like
+`Extension.method(f, {receiver: 'last'})` behave like
 ```js
 function (...args) { return f(...args, this) }
 ```
 ####  `'spread first'` or `'first spread'` or `'spread'`
-`Extension.method(f, 'spread first')` behave like 
+`Extension.method(f, {receiver: 'spread first'})` behave like 
 ```js
 function (...args) { return f(...this, ...args) }
 ```
 ####  `'spread last'` or `'last spread'`
-`Extension.method(f, 'spread last')` behave like 
+`Extension.method(f, {receiver: 'spread last'})` behave like 
 ```js
 function (...args) { return f(...args, ...this) }
 ```
