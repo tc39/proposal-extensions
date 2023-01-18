@@ -14,6 +14,7 @@ The main difference of Extensions of other programming languages with Extensions
 
 - 2003: Classboxes [Classboxes](http://scg.unibe.ch/research/classboxes),
 	[paper](http://scg.unibe.ch/archive/papers/Berg03aClassboxes.pdf)
+- 2005: Groovy [Categories](https://groovy-lang.org/metaprogramming.html#categories)	
 - 2007: C# 3.0+ [Extension methods](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/extension-methods)
 	(and possible future [extension properties](https://stackoverflow.com/questions/619033/does-c-sharp-have-extension-properties),
 	[issue](https://github.com/dotnet/csharplang/issues/192))
